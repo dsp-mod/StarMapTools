@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace StarMapTools
 {
-    [BepInPlugin("sky.plugins.dsp.StarMapTools", "StarMapTools", "3.0")]
+    [BepInPlugin("sky.plugins.dsp.StarMapTools", "StarMapTools", "3.1")]
     public class StarMapTools: BaseUnityPlugin
     {
         GameObject prefab_StarMapToolsBasePanel;//资源
@@ -421,18 +421,24 @@ namespace StarMapTools
         [HarmonyPatch(typeof(UIStarmap), "OnStarClick")]
         private static bool OnStarClick(UIStarmapStar star)
         {
-            self.StarList.value = star.star.index;
-            self.StarList.RefreshShownValue();
+            if (self.showGUI)
+            {
+                self.StarList.value = star.star.index;
+                self.StarList.RefreshShownValue();
+            }
             return true;
         }
         [HarmonyPrefix]
         [HarmonyPatch(typeof(UIStarmap), "OnPlanetClick")]
         private static bool OnPlanetClick(UIStarmapPlanet planet)
         {
-            self.StarList.value = planet.planet.star.index;
-            self.StarList.RefreshShownValue();
-            self.PlanetList.value = planet.planet.index+1;
-            self.PlanetList.RefreshShownValue();
+            if (self.showGUI)
+            {
+                self.StarList.value = planet.planet.star.index;
+                self.StarList.RefreshShownValue();
+                self.PlanetList.value = planet.planet.index + 1;
+                self.PlanetList.RefreshShownValue();
+            }
             return true;
         }
         [HarmonyPrefix]
