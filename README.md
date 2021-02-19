@@ -1,7 +1,7 @@
 # 星图工具
 游戏内按F1键打开或关闭GUI<br>
 在游戏内,按F2键传送至目标恒星或星球<br>
-下载链接 https://github.com/dsp-mod/StarMapTools/releases/download/v3.0/StarMapTools_3.0.zip<br>
+下载链接 https://github.com/dsp-mod/StarMapTools/releases/download/v3.1/StarMapTools_3.1.zip<br>
 
 v1.1更新内容<br>
 合并类文件(解决与QTools的冲突)<br>
