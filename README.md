@@ -29,3 +29,6 @@ v3.0更新内容<br>
 增加距离初始恒星最大距离的搜索限制<br>
 增加新建游戏界面自动连续搜索的功能<br>
 演示视频 https://www.bilibili.com/video/BV12A411M7DU/
+
+v3.1更新内容<br>
+修复未打开GUI时点击星图报错的BUG
