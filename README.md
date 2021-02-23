@@ -32,3 +32,7 @@ v3.0更新内容<br>
 
 v3.1更新内容<br>
 修复未打开GUI时点击星图报错的BUG
+
+v3.2更新内容<br>
+增加英文支持<br>
+Support English<br>
