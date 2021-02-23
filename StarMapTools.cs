@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace StarMapTools
 {
-    [BepInPlugin("sky.plugins.dsp.StarMapTools", "StarMapTools", "3.1")]
+    [BepInPlugin("sky.plugins.dsp.StarMapTools", "StarMapTools", "3.2")]
     public class StarMapTools: BaseUnityPlugin
     {
         GameObject prefab_StarMapToolsBasePanel;//资源
@@ -38,9 +38,10 @@ namespace StarMapTools
         {
             Harmony.CreateAndPatchAll(typeof(StarMapTools), null);
             self = this;
+            StarMapToolsTranslate.regAllTranslate();
             //加载资源
-            switchGUIKey = Config.Bind<KeyCode>("config", "switchGUI", KeyCode.F1, "开关GUI的按键").Value;
-            tpKey = Config.Bind<KeyCode>("config", "tp", KeyCode.F2, "传送按键").Value;
+            switchGUIKey = Config.Bind<KeyCode>("config", "switchGUI", KeyCode.F1, "开关GUI的按键".getTranslate()).Value;
+            tpKey = Config.Bind<KeyCode>("config", "tp", KeyCode.F2, "传送按键".getTranslate()).Value;
             var ab = AssetBundle.LoadFromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream("StarMapTools.starmaptools"));
             prefab_StarMapToolsBasePanel = ab.LoadAsset<GameObject>("StarMapToolsBasePanel");
         }
@@ -72,7 +73,7 @@ namespace StarMapTools
                         //更新数据
                         if (galaxy != UIRoot.instance.galaxySelect.starmap.galaxyData)
                         {
-                            TitleText.text = "新游戏模式";
+                            TitleText.text = "新游戏模式".getTranslate();
                             galaxy = UIRoot.instance.galaxySelect.starmap.galaxyData;
                             StarList.ClearOptions();
                             ResultList.ClearOptions();
@@ -95,7 +96,7 @@ namespace StarMapTools
                         //更新数据
                         if (galaxy != GameMain.galaxy)
                         {
-                            TitleText.text = "读档模式";
+                            TitleText.text = "读档模式".getTranslate();
                             galaxy = GameMain.galaxy;
                             StarList.ClearOptions();
                             ResultList.ClearOptions();
@@ -119,9 +120,9 @@ namespace StarMapTools
                         }
                     }
                     //等待数据加载
-                    else if (TitleText.text != "等待数据")
+                    else if (TitleText.text != "等待数据".getTranslate())
                     {
-                        TitleText.text = "等待数据";
+                        TitleText.text = "等待数据".getTranslate();
                         StarList.ClearOptions();
                         PlanetList.ClearOptions();
                         ResultList.ClearOptions();
@@ -160,6 +161,15 @@ namespace StarMapTools
                 ResultList = ui_StarMapToolsBasePanel.transform.Find("ResultList").GetComponent<Dropdown>();
                 SearchButton = ui_StarMapToolsBasePanel.transform.Find("SearchButton").GetComponent<Button>();
                 var TempToggle = OptionsList.content.Find("TempToggle").GetComponent<Toggle>();
+                //翻译控件
+                if (Localization.language != Language.zhCN)
+                {
+                    LoadResAmount.transform.Find("Label").GetComponent<Text>().text = "加载矿物数量".getTranslate();
+                    SearchNextToggle.transform.Find("Label").GetComponent<Text>().text = "连续搜索".getTranslate();
+                    SearchButton.transform.Find("Text").GetComponent<Text>().text = "搜索".getTranslate();
+                    DysonLuminoText.transform.Find("Placeholder").GetComponent<Text>().text = "最小光度".getTranslate();
+                    DistanceText.transform.Find("Placeholder").GetComponent<Text>().text = "最远距离".getTranslate();
+                }
                 //获取数据
                 var TempStarTypes = starSearcher.AllStarTypes;
                 var TempPlanteTypes=starSearcher.AllPlanteTypes;
@@ -218,7 +228,7 @@ namespace StarMapTools
                         {
                             star.Load();
                         }
-                        PlanetList.options.Add(new Dropdown.OptionData("恒星"));
+                        PlanetList.options.Add(new Dropdown.OptionData("恒星".getTranslate()));
                         foreach (PlanetData planet in star.planets)
                         {
                             PlanetList.options.Add(new Dropdown.OptionData(planet.name));
@@ -233,48 +243,48 @@ namespace StarMapTools
                     if (PlanetList.value>0 && PlanetList.value <= star.planetCount)
                     {
                         var planet = star.planets[PlanetList.value - 1];
-                        var info = planet.name+"的信息:\n";
-                        info += "词条:" + planet.singularityString + "\n";//词条
-                        info += "类型:" + planet.typeString + "\n";
-                        string waterType = "未知";
+                        var info = planet.name+"的信息:".getTranslate()+ "\n";
+                        info += "词条:".getTranslate() + planet.singularityString + "\n";//词条
+                        info += "类型:".getTranslate() + planet.typeString + "\n";
+                        string waterType = "未知".getTranslate();
                         switch (planet.waterItemId)
                         {
                             case -1:
-                                waterType = "熔岩";
+                                waterType = "熔岩".getTranslate();
                                 break;
                             case 0:
-                                waterType = "无";
+                                waterType = "无".getTranslate();
                                 break;
                             default:
                                 waterType = LDB.ItemName(planet.waterItemId);
                                 break;
                         }
-                        info += "海洋类型:" + waterType + "\n";
+                        info += "海洋类型:".getTranslate() + waterType + "\n";
                         if(planet.type!= EPlanetType.Gas && planet.veinSpotsSketch!=null)
                         {
-                            info += "矿物信息:" + "\n";
+                            info += "矿物信息:".getTranslate() + "\n";
                             for(int i = 0; i <LDB.veins.Length; i++)
                             {
                                 var name = LDB.veins.dataArray[i].name;
                                 object amount = planet.veinAmounts[i + 1];
                                 if (planet.veinSpotsSketch[i+1]==0)
                                 {
-                                    amount = "无";
+                                    amount = "无".getTranslate();
                                 }
                                 else if ((long)amount == 0)
                                 {
                                     if (!LoadResAmount.isOn)
                                     {
-                                        amount = "有";
+                                        amount = "有".getTranslate();
                                     }
                                     else if (UIRoot.instance.galaxySelect.starmap.galaxyData != null)
                                     {
-                                        amount = "正在加载";
+                                        amount = "正在加载".getTranslate();
                                         loadingStarData = true;
                                     }
                                     else
                                     {
-                                        amount = "未加载,靠近后显示";
+                                        amount = "未加载,靠近后显示".getTranslate();
                                     }
                                 }
                                 else if (i + 1 == 7)
@@ -288,39 +298,39 @@ namespace StarMapTools
                     }
                     else if (PlanetList.value == 0)
                     {
-                        var info = star.name + "星系的信息:"+(loadingStarData?"正在加载":"")+"\n";
-                        info += "恒星类型:" + star.typeString + "\n";
-                        info += "星球数量:" + star.planetCount + "\n";
-                        info += "光度:" + star.dysonLumino.ToString() + "\n";
-                        info += "距离初始星系恒星:" + ((star.uPosition - galaxy.StarById(1).uPosition).magnitude / 2400000.0).ToString()+"光年\n";
-                        info += "星球列表:";
+                        var info = star.name + "星系的信息:".getTranslate() + (loadingStarData?"正在加载".getTranslate() : "")+"\n";
+                        info += "恒星类型:".getTranslate() + star.typeString + "\n";
+                        info += "星球数量:".getTranslate() + star.planetCount + "\n";
+                        info += "光度:".getTranslate() + star.dysonLumino.ToString() + "\n";
+                        info += "距离初始星系恒星:".getTranslate() + ((star.uPosition - galaxy.StarById(1).uPosition).magnitude / 2400000.0).ToString()+"光年".getTranslate()+ "\n";
+                        info += "星球列表:".getTranslate();
                         foreach (PlanetData planet in star.planets)
                         {
                             info +="-"+planet.typeString + "  " + planet.singularityString;
                         }
-                        info += "\n矿物信息:" + "\n";
+                        info += "\n"+"矿物信息:".getTranslate() + "\n";
                         for (int i = 0; i < LDB.veins.Length; i++)
                         {
                             var name = LDB.veins.dataArray[i].name;
                             object amount = star.GetResourceAmount(i + 1);
                             if (star.GetResourceSpots(i + 1) == 0)
                             {
-                                amount = "无";
+                                amount = "无".getTranslate();
                             }
                             else if ((long)amount == 0)
                             {
                                 if (!LoadResAmount.isOn)
                                 {
-                                    amount = "有";
+                                    amount = "有".getTranslate();
                                 }
                                 else if(UIRoot.instance.galaxySelect.starmap.galaxyData != null)
                                 {
-                                    amount = "正在加载";
+                                    amount = "正在加载".getTranslate();
                                     loadingStarData = true;
                                 }
                                 else
                                 {
-                                    amount = "未加载,靠近后显示";
+                                    amount = "未加载,靠近后显示".getTranslate();
                                 }
                             }
                             else if (i + 1 == 7)
@@ -628,6 +638,59 @@ namespace StarMapTools
             VeinTypes.Clear();
             dysonLumino = 0;
             distance = 1000;
+        }
+    }
+
+    //翻译器
+    public static class StarMapToolsTranslate
+    {
+        static Dictionary<string, string> TranslateDict = new Dictionary<string, string>();
+        public static string getTranslate(this string s)
+        {
+            if (Localization.language!=Language.zhCN && TranslateDict.ContainsKey(s))
+            {
+                return TranslateDict[s];
+            }
+            else
+            {
+                return s;
+            }
+        }
+        public static void regAllTranslate()
+        {
+            TranslateDict.Clear();
+            TranslateDict.Add("开关GUI的按键", "Open and Close GUI Key");
+            TranslateDict.Add("传送按键", "TP Key");
+            TranslateDict.Add("新游戏模式", "NEW GAME");
+            TranslateDict.Add("读档模式", "IN GAME");
+            TranslateDict.Add("等待数据", "WAIT DATA");
+            TranslateDict.Add("加载矿物数量", "Load Vein Amount");
+            TranslateDict.Add("连续搜索", "Search Next Seed");
+            TranslateDict.Add("最小光度", "Minimum luminosity");
+            TranslateDict.Add("最远距离", "Maximum light year");
+            TranslateDict.Add("搜索", "Search");
+
+            TranslateDict.Add("恒星", "Star");
+            TranslateDict.Add("恒星类型:", "Star Type:");
+            TranslateDict.Add("星球数量:", "Planet Num:");
+            TranslateDict.Add("星系的信息:", " Info:");
+            TranslateDict.Add("光度:", "Luminosity:");
+            TranslateDict.Add("距离初始星系恒星:", "Distance from the beginning:");
+            TranslateDict.Add("光年", "Light years");
+            TranslateDict.Add("星球列表:", "Planet List:");
+
+            TranslateDict.Add("的信息:", " Info:");
+            TranslateDict.Add("类型:", "Type:");
+            TranslateDict.Add("词条:", "Singularity:");
+            TranslateDict.Add("海洋类型:", "Ocean Type:");
+            TranslateDict.Add("未知", " Unknown:");
+            TranslateDict.Add("熔岩", " Lava");
+            TranslateDict.Add("矿物信息:", "VeinList:");
+
+            TranslateDict.Add("无", "None");
+            TranslateDict.Add("有", "Exist");
+            TranslateDict.Add("正在加载", "Loading");
+            TranslateDict.Add("未加载,靠近后显示", "Not loaded, display when approaching");
         }
     }
 }
